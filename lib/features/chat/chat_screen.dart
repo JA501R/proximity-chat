@@ -66,10 +66,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 color: Color(0xFF392033),
               ),
-              child: const Icon(
-                Icons.person_outline,
-                size: 21,
-                color: Color(0xFFFF789A),
+              child: Center(
+                child: Text(
+                  widget.user.initials,
+                  style: const TextStyle(
+                    color: Color(0xFF4DA3FF),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 12),

@@ -12,9 +12,21 @@ class NearbyScreen extends StatefulWidget {
 
 class _NearbyScreenState extends State<NearbyScreen> {
   final List<NearbyUser> _users = [
-    const NearbyUser(id: '1', name: 'Alex'),
-    const NearbyUser(id: '2', name: 'Sam'),
-    const NearbyUser(id: '3', name: 'Unknown'),
+    const NearbyUser(
+      id: '1',
+      name: 'Alex',
+      bio: 'Coffee, music & spontaneous conversations.',
+    ),
+    const NearbyUser(
+      id: '2',
+      name: 'Sam',
+      bio: 'Say hi 👋 I promise I don’t bite.',
+    ),
+    const NearbyUser(
+      id: '3',
+      name: 'Robin',
+      bio: 'Probably here for the same reason you are.',
+    ),
   ];
 
   List<NearbyUser> get _nearbyUsers {
@@ -147,7 +159,16 @@ class _NearbyUserCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Color(0xFF182230),
               ),
-              child: const Icon(Icons.person_outline, color: Color(0xFF4DA3FF)),
+              child: Center(
+                child: Text(
+                  user.initials,
+                  style: const TextStyle(
+                    color: Color(0xFF4DA3FF),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -161,7 +182,20 @@ class _NearbyUserCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
+
+                  Text(
+                    user.bio,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.45),
+                    ),
+                  ),
+
+                  const SizedBox(height: 7),
+
                   Row(
                     children: [
                       Container(

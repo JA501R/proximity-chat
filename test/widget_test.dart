@@ -10,6 +10,6 @@ void main() {
 
     expect(find.text('Alex'), findsOneWidget);
     expect(find.text('Sam'), findsOneWidget);
-    expect(find.text('Unknown'), findsOneWidget);
+    expect(find.text('Robin'), findsOneWidget);
   });
 }
