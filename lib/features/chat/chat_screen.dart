@@ -53,9 +53,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF080A0D),
+      backgroundColor: const Color(0xFF190F1A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF080A0D),
+        backgroundColor: const Color(0xFF190F1A),
         titleSpacing: 0,
         title: Row(
           children: [
@@ -64,12 +64,12 @@ class _ChatScreenState extends State<ChatScreen> {
               height: 38,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF182230),
+                color: Color(0xFF392033),
               ),
               child: const Icon(
                 Icons.person_outline,
                 size: 21,
-                color: Color(0xFF4DA3FF),
+                color: Color(0xFFFF789A),
               ),
             ),
             const SizedBox(width: 12),
@@ -88,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icon(
                       Icons.circle,
                       size: 7,
-                      color: _isNearby ? const Color(0xFF4DA3FF) : Colors.grey,
+                      color: _isNearby ? const Color(0xFFFF789A) : Colors.grey,
                     ),
                     const SizedBox(width: 5),
                     Text(
@@ -122,7 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              color: Colors.white.withValues(alpha: 0.05),
+              color: const Color(0xFF2A1928),
               child: Row(
                 children: [
                   const Icon(
@@ -193,7 +193,7 @@ class _ChatScreenState extends State<ChatScreen> {
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
             decoration: BoxDecoration(
-              color: const Color(0xFF4DA3FF),
+              color: const Color(0xFFB93660),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Text(
@@ -224,7 +224,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ? 'Message...'
                       : 'User is no longer nearby',
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.07),
+                  fillColor: const Color(0xFF30202D),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,

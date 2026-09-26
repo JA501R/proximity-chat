@@ -3,17 +3,28 @@ import 'package:flutter/material.dart';
 import '../chat/chat_screen.dart';
 import 'nearby_user.dart';
 
-class NearbyScreen extends StatelessWidget {
+class NearbyScreen extends StatefulWidget {
   const NearbyScreen({super.key});
 
-  static const List<NearbyUser> _users = [
-    NearbyUser(id: '1', name: 'Alex', distance: 1.8),
-    NearbyUser(id: '2', name: 'Sam', distance: 3.4),
-    NearbyUser(id: '3', name: 'Unknown', distance: 4.7),
+  @override
+  State<NearbyScreen> createState() => _NearbyScreenState();
+}
+
+class _NearbyScreenState extends State<NearbyScreen> {
+  final List<NearbyUser> _users = [
+    const NearbyUser(id: '1', name: 'Alex'),
+    const NearbyUser(id: '2', name: 'Sam'),
+    const NearbyUser(id: '3', name: 'Unknown'),
   ];
+
+  List<NearbyUser> get _nearbyUsers {
+    return _users.where((user) => user.isNearby).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final nearbyUsers = _nearbyUsers;
+
     return Scaffold(
       backgroundColor: const Color(0xFF080A0D),
       body: SafeArea(
@@ -25,7 +36,7 @@ class NearbyScreen extends StatelessWidget {
                 children: [
                   const Spacer(),
                   const Text(
-                    'Nearby',
+                    'Glance',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
@@ -36,50 +47,71 @@ class NearbyScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             const Icon(Icons.radar, size: 52, color: Color(0xFF4DA3FF)),
-
             const SizedBox(height: 16),
-
-            const Text(
-              '3 people nearby',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-            ),
-
-            const SizedBox(height: 8),
-
             Text(
-              'Only people within 5 meters are visible',
+              nearbyUsers.isEmpty
+                  ? 'Looking around...'
+                  : '${nearbyUsers.length} ${nearbyUsers.length == 1 ? 'person' : 'people'} nearby',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Only people close enough to connect are visible',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.5),
               ),
             ),
-
             const SizedBox(height: 32),
-
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: _users.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final user = _users[index];
+              child: nearbyUsers.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: nearbyUsers.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final user = nearbyUsers[index];
 
-                  return _NearbyUserCard(
-                    user: user,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(user: user),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+                        return _NearbyUserCard(
+                          user: user,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(user: user),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.people_outline, size: 46, color: Colors.white24),
+            const SizedBox(height: 16),
+            const Text(
+              'No one nearby',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'When someone using Glance is nearby, they can appear here.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
             ),
           ],
         ),

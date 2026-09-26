@@ -16,9 +16,9 @@ class ProximityChatApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF080A0D),
+        scaffoldBackgroundColor: const Color(0xFF190F1A),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4DA3FF),
+          seedColor: const Color(0xFFFF789A),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
