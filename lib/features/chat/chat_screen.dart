@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../services/proximity_service.dart';
 import '../nearby/nearby_user.dart';
+import '../profile/user_profile.dart';
+import 'models/chat_message.dart';
+import 'models/chat_session.dart';
 
 class ChatScreen extends StatefulWidget {
   final NearbyUser user;
+  final UserProfile localProfile;
 
-  const ChatScreen({super.key, required this.user});
+  const ChatScreen({super.key, required this.user, required this.localProfile});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -14,11 +20,20 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
 
-  final List<String> _messages = [];
+  static const Uuid _uuid = Uuid();
 
-  // Development simulation.
-  // Later this value will come from the proximity service.
-  bool _isNearby = true;
+  late final ProximityService _proximityService;
+  late final ChatSession _session;
+
+  bool get _isNearby => _proximityService.isNearby;
+
+  void _onProximityChanged() {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {});
+  }
 
   void _sendMessage() {
     if (!_isNearby) {
@@ -32,22 +47,58 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     setState(() {
-      _messages.add(message);
+      _session.messages.add(
+        ChatMessage(
+          id: _uuid.v4(),
+          text: message,
+          sender: MessageSender.local,
+          sentAt: DateTime.now(),
+        ),
+      );
     });
 
     _messageController.clear();
   }
 
-  void _toggleNearbyStatus() {
-    setState(() {
-      _isNearby = !_isNearby;
-    });
+  @override
+  void initState() {
+    super.initState();
+
+    _session = ChatSession(
+      id: _uuid.v4(),
+      localUserId: widget.localProfile.id,
+      remoteUserId: widget.user.id,
+      startedAt: DateTime.now(),
+    );
+
+    _proximityService = ProximityService();
+    _proximityService.addListener(_onProximityChanged);
   }
 
   @override
   void dispose() {
+    _proximityService.removeListener(_onProximityChanged);
+    _proximityService.dispose();
     _messageController.dispose();
+
     super.dispose();
+  }
+
+  void _simulateReply() {
+    if (!_isNearby) {
+      return;
+    }
+
+    setState(() {
+      _session.messages.add(
+        ChatMessage(
+          id: _uuid.v4(),
+          text: 'Hey! Nice to meet you 👋',
+          sender: MessageSender.remote,
+          sentAt: DateTime.now(),
+        ),
+      );
+    });
   }
 
   @override
@@ -114,10 +165,15 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             tooltip: _isNearby ? 'Simulate leaving' : 'Simulate returning',
-            onPressed: _toggleNearbyStatus,
+            onPressed: _proximityService.toggleForDevelopment,
             icon: Icon(
               _isNearby ? Icons.bluetooth_disabled : Icons.bluetooth_connected,
             ),
+          ),
+          IconButton(
+            tooltip: 'Simulate reply',
+            onPressed: _isNearby ? _simulateReply : null,
+            icon: const Icon(Icons.mark_chat_unread_outlined),
           ),
         ],
       ),
@@ -150,7 +206,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           Expanded(
-            child: _messages.isEmpty ? _buildEmptyState() : _buildMessages(),
+            child: _session.messages.isEmpty
+                ? _buildEmptyState()
+                : _buildMessages(),
           ),
           _buildMessageInput(),
         ],
@@ -190,20 +248,32 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessages() {
     return ListView.builder(
       padding: const EdgeInsets.all(20),
-      itemCount: _messages.length,
+      itemCount: _session.messages.length,
       itemBuilder: (context, index) {
+        final message = _session.messages[index];
+
+        final isLocal = message.sender == MessageSender.local;
+
         return Align(
-          alignment: Alignment.centerRight,
+          alignment: isLocal ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            constraints: const BoxConstraints(maxWidth: 300),
             decoration: BoxDecoration(
-              color: const Color(0xFFB93660),
+              color: isLocal
+                  ? const Color(0xFF4DA3FF)
+                  : Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Text(
-              _messages[index],
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              message.text,
+              style: TextStyle(
+                color: isLocal
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.9),
+                fontSize: 15,
+              ),
             ),
           ),
         );

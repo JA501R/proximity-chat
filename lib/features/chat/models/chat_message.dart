@@ -1,0 +1,15 @@
+enum MessageSender { local, remote }
+
+class ChatMessage {
+  final String id;
+  final String text;
+  final MessageSender sender;
+  final DateTime sentAt;
+
+  const ChatMessage({
+    required this.id,
+    required this.text,
+    required this.sender,
+    required this.sentAt,
+  });
+}

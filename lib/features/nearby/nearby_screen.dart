@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../chat/chat_screen.dart';
 import '../profile/profile_screen.dart';
 import '../profile/user_profile.dart';
-
-import '../chat/chat_screen.dart';
 import 'nearby_user.dart';
 
 class NearbyScreen extends StatefulWidget {
   final UserProfile profile;
   final ValueChanged<UserProfile> onProfileUpdated;
+
   const NearbyScreen({
     super.key,
     required this.profile,
@@ -22,17 +22,17 @@ class NearbyScreen extends StatefulWidget {
 class _NearbyScreenState extends State<NearbyScreen> {
   final List<NearbyUser> _users = [
     const NearbyUser(
-      id: '1',
+      id: 'mock-user-alex',
       name: 'Alex',
       bio: 'Coffee, music & spontaneous conversations.',
     ),
     const NearbyUser(
-      id: '2',
+      id: 'mock-user-sam',
       name: 'Sam',
       bio: 'Say hi 👋 I promise I don’t bite.',
     ),
     const NearbyUser(
-      id: '3',
+      id: 'mock-user-robin',
       name: 'Robin',
       bio: 'Probably here for the same reason you are.',
     ),
@@ -40,6 +40,27 @@ class _NearbyScreenState extends State<NearbyScreen> {
 
   List<NearbyUser> get _nearbyUsers {
     return _users.where((user) => user.isNearby).toList();
+  }
+
+  Future<void> _openProfile() async {
+    final updatedProfile = await Navigator.of(context).push<UserProfile>(
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(profile: widget.profile),
+      ),
+    );
+
+    if (updatedProfile != null) {
+      widget.onProfileUpdated(updatedProfile);
+    }
+  }
+
+  void _openChat(NearbyUser user) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>
+            ChatScreen(user: user, localProfile: widget.profile),
+      ),
+    );
   }
 
   @override
@@ -62,19 +83,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () async {
-                      final updatedProfile = await Navigator.of(context)
-                          .push<UserProfile>(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileScreen(profile: widget.profile),
-                            ),
-                          );
-
-                      if (updatedProfile != null) {
-                        widget.onProfileUpdated(updatedProfile);
-                      }
-                    },
+                    onPressed: _openProfile,
                     icon: const Icon(Icons.settings_outlined),
                   ),
                 ],
@@ -86,7 +95,8 @@ class _NearbyScreenState extends State<NearbyScreen> {
             Text(
               nearbyUsers.isEmpty
                   ? 'Looking around...'
-                  : '${nearbyUsers.length} ${nearbyUsers.length == 1 ? 'person' : 'people'} nearby',
+                  : '${nearbyUsers.length} '
+                        '${nearbyUsers.length == 1 ? 'person' : 'people'} nearby',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
@@ -110,13 +120,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
 
                         return _NearbyUserCard(
                           user: user,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChatScreen(user: user),
-                              ),
-                            );
-                          },
+                          onTap: () => _openChat(user),
                         );
                       },
                     ),
@@ -142,7 +146,8 @@ class _NearbyScreenState extends State<NearbyScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'When someone using Glance is nearby, they can appear here.',
+              'When someone using Glance is nearby, '
+              'they can appear here.',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
             ),
@@ -204,7 +209,6 @@ class _NearbyUserCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-
                   Text(
                     user.bio,
                     maxLines: 1,
@@ -214,9 +218,7 @@ class _NearbyUserCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.45),
                     ),
                   ),
-
                   const SizedBox(height: 7),
-
                   Row(
                     children: [
                       Container(
@@ -231,7 +233,7 @@ class _NearbyUserCard extends StatelessWidget {
                       Text(
                         'Nearby',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.5),
                         ),
                       ),
