@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 
+import '../profile/profile_screen.dart';
+import '../profile/user_profile.dart';
+
 import '../chat/chat_screen.dart';
 import 'nearby_user.dart';
 
 class NearbyScreen extends StatefulWidget {
-  const NearbyScreen({super.key});
+  final UserProfile profile;
+  final ValueChanged<UserProfile> onProfileUpdated;
+  const NearbyScreen({
+    super.key,
+    required this.profile,
+    required this.onProfileUpdated,
+  });
 
   @override
   State<NearbyScreen> createState() => _NearbyScreenState();
@@ -53,7 +62,19 @@ class _NearbyScreenState extends State<NearbyScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final updatedProfile = await Navigator.of(context)
+                          .push<UserProfile>(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfileScreen(profile: widget.profile),
+                            ),
+                          );
+
+                      if (updatedProfile != null) {
+                        widget.onProfileUpdated(updatedProfile);
+                      }
+                    },
                     icon: const Icon(Icons.settings_outlined),
                   ),
                 ],

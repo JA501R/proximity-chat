@@ -61,6 +61,12 @@ class _GlanceAppState extends State<GlanceApp> {
     });
   }
 
+  void _updateProfile(UserProfile profile) {
+    setState(() {
+      _profile = profile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -88,7 +94,7 @@ class _GlanceAppState extends State<GlanceApp> {
       return OnboardingScreen(onCompleted: _completeOnboarding);
     }
 
-    return const NearbyScreen();
+    return NearbyScreen(profile: _profile!, onProfileUpdated: _updateProfile);
   }
 }
 
