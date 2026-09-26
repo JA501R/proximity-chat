@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../chat/chat_screen.dart';
 import 'nearby_user.dart';
 
 class NearbyScreen extends StatelessWidget {
@@ -67,7 +68,16 @@ class NearbyScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final user = _users[index];
 
-                  return _NearbyUserCard(user: user);
+                  return _NearbyUserCard(
+                    user: user,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(user: user),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ),
@@ -80,70 +90,72 @@ class NearbyScreen extends StatelessWidget {
 
 class _NearbyUserCard extends StatelessWidget {
   final NearbyUser user;
+  final VoidCallback onTap;
 
-  const _NearbyUserCard({required this.user});
+  const _NearbyUserCard({required this.user, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFF182230),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF182230),
+              ),
+              child: const Icon(Icons.person_outline, color: Color(0xFF4DA3FF)),
             ),
-            child: const Icon(Icons.person_outline, color: Color(0xFF4DA3FF)),
-          ),
-
-          const SizedBox(width: 16),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    Container(
-                      width: 7,
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4DA3FF),
-                        shape: BoxShape.circle,
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF4DA3FF),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 7),
-                    Text(
-                      'Nearby',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.5),
+                      const SizedBox(width: 7),
+                      Text(
+                        'Nearby',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.5),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          const Icon(Icons.chevron_right, color: Colors.white38),
-        ],
+            const Icon(Icons.chevron_right, color: Colors.white38),
+          ],
+        ),
       ),
     );
   }
