@@ -25,6 +25,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     final profile = UserProfile(
+      id: '',
       displayName: _nameController.text.trim(),
       bio: _bioController.text.trim(),
     );

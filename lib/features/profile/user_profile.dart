@@ -1,8 +1,13 @@
 class UserProfile {
+  final String id;
   final String displayName;
   final String bio;
 
-  const UserProfile({required this.displayName, required this.bio});
+  const UserProfile({
+    required this.id,
+    required this.displayName,
+    required this.bio,
+  });
 
   String get initials {
     final parts = displayName.trim().split(RegExp(r'\s+'));
